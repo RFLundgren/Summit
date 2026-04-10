@@ -1,4 +1,4 @@
-# Immich Desktop — Help Guide
+# Summit — Help Guide
 
 ## Table of Contents
 1. [What's New in Version 1.0.0](#whats-new-in-version-100)
@@ -27,7 +27,7 @@
 
 ### Files On-Demand — OneDrive-style cloud placeholders
 
-Immich Desktop now supports **Files On-Demand** via the Windows Cloud Files API — the same mechanism used by OneDrive. Every photo in your Immich library appears as a placeholder file in Windows Explorer. Files occupy almost no disk space until you open them, at which point they download from Immich automatically. You can free up space or pin files using the Explorer right-click menu.
+Summit now supports **Files On-Demand** via the Windows Cloud Files API — the same mechanism used by OneDrive. Every photo in your Immich library appears as a placeholder file in Windows Explorer. Files occupy almost no disk space until you open them, at which point they download from Immich automatically. You can free up space or pin files using the Explorer right-click menu.
 
 ### Explorer Status column icons
 
@@ -43,11 +43,11 @@ When adding or editing an account, the **Find** button automatically scans your 
 
 ### Local / Remote URL fallback
 
-Each account can have both a **local network URL** and a **remote internet URL**. Immich Desktop automatically uses the local URL when you are on your home or office network and falls back to the remote URL when away — no manual switching required.
+Each account can have both a **local network URL** and a **remote internet URL**. Summit automatically uses the local URL when you are on your home or office network and falls back to the remote URL when away — no manual switching required.
 
 ### Multiple account support
 
-Immich Desktop supports multiple Immich accounts simultaneously. Each account has independent upload folders, download folder, sync mode, and duplicate handling settings. All enabled accounts sync in sequence each cycle.
+Summit supports multiple Immich accounts simultaneously. Each account has independent upload folders, download folder, sync mode, and duplicate handling settings. All enabled accounts sync in sequence each cycle.
 
 ### Pause / Resume sync
 
@@ -59,7 +59,7 @@ The Sync Status page includes diagnostics for Files On-Demand: per-file state in
 
 ### Reliable debug logging
 
-All key decisions are logged to `%LOCALAPPDATA%\Temp\immich_debug.log` in real time, independently of the application log system. This file is always written even during early startup and is the first place to check when investigating issues.
+All key decisions are logged to `%LOCALAPPDATA%\Temp\summit_debug.log` in real time, independently of the application log system. This file is always written even during early startup and is the first place to check when investigating issues.
 
 ---
 
@@ -109,15 +109,15 @@ All key decisions are logged to `%LOCALAPPDATA%\Temp\immich_debug.log` in real t
 
 ### Shell extension DLL locked during installer updates
 
-**Root cause:** Explorer loads `immich_shell_ext.dll` and holds it open. A subsequent installer run could not overwrite the locked file, causing updates to fail silently.
+**Root cause:** Explorer loads `summit_shell_ext.dll` and holds it open. A subsequent installer run could not overwrite the locked file, causing updates to fail silently.
 
-**Fix:** The installer ships the DLL with its base name (`immich_shell_ext.dll`). On startup the app copies it to a versioned filename (`immich_shell_ext_1.0.0.dll`) and registers that versioned copy. The base-named file is never held open by Explorer, so the installer can always replace it. Old versioned files are cleaned up automatically.
+**Fix:** The installer ships the DLL with its base name (`summit_shell_ext.dll`). On startup the app copies it to a versioned filename (`summit_shell_ext_1.0.0.dll`) and registers that versioned copy. The base-named file is never held open by Explorer, so the installer can always replace it. Old versioned files are cleaned up automatically.
 
 ---
 
 ## Getting Started
 
-Immich Desktop runs silently in the background as a **system tray application** — there is no persistent window on your taskbar. After launching, look for the Immich icon in your system tray (bottom-right corner of the taskbar, near the clock).
+Summit runs silently in the background as a **system tray application** — there is no persistent window on your taskbar. After launching, look for the Summit icon in your system tray (bottom-right corner of the taskbar, near the clock).
 
 The app starts hidden. Click the tray icon to open the Dashboard, or right-click for the menu.
 
@@ -135,24 +135,24 @@ The app starts hidden. Click the tray icon to open the Dashboard, or right-click
    - **Password** — your Immich password
 4. Click **Sign In**.
 
-Immich Desktop authenticates with your server and automatically creates a named API key called **"Immich Desktop — *YourPCName*"** on your Immich account. Your password is never stored — only the API key is saved locally.
+Summit authenticates with your server and automatically creates a named API key called **"Summit — *YourPCName*"** on your Immich account. Your password is never stored — only the API key is saved locally.
 
 ---
 
 ## The System Tray
 
-Right-click the Immich Desktop tray icon for these options:
+Right-click the Summit tray icon for these options:
 
 | Option | Description |
 |---|---|
 | **Open Dashboard** | Shows the main window |
 | **Pause Sync** | Temporarily pauses all sync activity |
 | **Resume Sync** | Appears when sync is paused — resumes normal operation |
-| **Quit Immich Desktop** | Exits the application completely |
+| **Quit Summit** | Exits the application completely |
 
 Left-clicking the tray icon opens the Dashboard directly. The tray tooltip shows the current sync phase (Idle, Uploading, Downloading, Paused, or Error).
 
-Closing the Dashboard **hides** it — Immich Desktop continues running in the background.
+Closing the Dashboard **hides** it — Summit continues running in the background.
 
 ---
 
@@ -189,7 +189,7 @@ All enabled accounts are synced in sequence each cycle. The counters reflect tot
 
 ## Connection Modes: Local vs Remote
 
-If you have configured a **Local network URL** for your account, Immich Desktop automatically tries to connect via your local network first (faster). If the local connection fails or is unavailable, it falls back to your remote/internet URL automatically.
+If you have configured a **Local network URL** for your account, Summit automatically tries to connect via your local network first (faster). If the local connection fails or is unavailable, it falls back to your remote/internet URL automatically.
 
 The Dashboard shows which mode is active:
 - **Local** badge — connected via your home/office network
@@ -205,7 +205,7 @@ When adding or editing an account, you can use the **Find** button to automatica
 
 1. In the Add Account or Edit Account form, expand the **Local network URL** section.
 2. Click **Find**.
-3. Immich Desktop scans your local `/24` subnet on port 2283 and lists any Immich servers found.
+3. Summit scans your local `/24` subnet on port 2283 and lists any Immich servers found.
 4. Click a result to fill in the URL automatically.
 
 > **Note:** Discovery may take up to 10 seconds. It also tries `immich.local` and `immich` hostnames automatically. If your Immich server runs on a non-standard port, enter the address manually.
@@ -214,7 +214,7 @@ When adding or editing an account, you can use the **Find** button to automatica
 
 ## Managing Multiple Accounts
 
-Immich Desktop supports multiple Immich accounts (e.g. personal + family servers). **All enabled accounts sync simultaneously** — you do not need to switch between them.
+Summit supports multiple Immich accounts (e.g. personal + family servers). **All enabled accounts sync simultaneously** — you do not need to switch between them.
 
 - **Add accounts** via the Accounts sidebar page.
 - **Active account** — the account shown in the Dashboard title bar and Sync Status page. Switch it using the checkmark button next to any account in the list.
@@ -247,7 +247,7 @@ Files are deduplicated by SHA-1 hash on the Immich server — re-uploading the s
 Only shown in **Cloud + Local** mode. New photos from Immich that are not already on your device will be downloaded here as regular files.
 
 **Requirements:**
-- The folder must already exist — Immich Desktop **never creates folders automatically**.
+- The folder must already exist — Summit **never creates folders automatically**.
 - Works with any location Windows can write to, including mapped network drives and UNC paths (`\\server\share`).
 
 ### Sync Root Folder (Files On-Demand mode)
@@ -258,13 +258,13 @@ See the **Files On-Demand** section below for full details and requirements.
 
 ## Files On-Demand (Cloud Placeholders)
 
-Files On-Demand is Immich Desktop's most powerful sync mode. It works like OneDrive Files On-Demand: placeholder files appear in Explorer for every photo in your Immich library. Files occupy almost no disk space until you open them, at which point they are downloaded from Immich automatically.
+Files On-Demand is Summit's most powerful sync mode. It works like OneDrive Files On-Demand: placeholder files appear in Explorer for every photo in your Immich library. Files occupy almost no disk space until you open them, at which point they are downloaded from Immich automatically.
 
 ### How it works
 
-1. After each sync cycle, Immich Desktop creates **placeholder files** in your sync root folder — one per photo in your Immich library.
+1. After each sync cycle, Summit creates **placeholder files** in your sync root folder — one per photo in your Immich library.
 2. Placeholders look like real files in Explorer and show a **cloud icon** in the Status column.
-3. When you open a placeholder (double-click), Windows automatically asks Immich Desktop to download the file. A progress indicator appears; the file opens once downloaded.
+3. When you open a placeholder (double-click), Windows automatically asks Summit to download the file. A progress indicator appears; the file opens once downloaded.
 4. After hydration, the file shows a **green checkmark** icon and is fully available offline.
 5. Right-clicking a hydrated file reveals **"Free up space"** (revert to placeholder) and **"Always keep on this device"** (pin so it is never dehydrated automatically).
 
@@ -272,13 +272,13 @@ Files On-Demand is Immich Desktop's most powerful sync mode. It works like OneDr
 
 - Must be on a **local NTFS drive** (e.g. `C:\`, `D:\`). Mapped network drives and UNC paths are not supported by the Windows Cloud Files API.
 - Must **not** be a Windows known folder directly (e.g. do not use `C:\Users\You\Pictures` itself — use a subfolder such as `C:\Users\You\Pictures\Immich`).
-- Must **already exist** before you save the setting. Immich Desktop will not create it for you. Create the folder in Explorer first, then select it.
+- Must **already exist** before you save the setting. Summit will not create it for you. Create the folder in Explorer first, then select it.
 - You can change this folder at any time in Settings — see **Changing your sync root folder** below.
 
 ### First-time setup
 
 1. Create your desired sync folder in Explorer (e.g. `D:\Immich Photos`).
-2. In Immich Desktop → **Folders**, set Sync Mode to **Files On-Demand** and select the folder.
+2. In Summit → **Folders**, set Sync Mode to **Files On-Demand** and select the folder.
 3. Click **Save**.
 4. Click **Sync Now** on the Sync Status page. Placeholder files will appear in the folder after the cycle completes.
 5. Navigate to the folder in Explorer. You should see your Immich photos as placeholder files with cloud icons.
@@ -330,7 +330,7 @@ If the Status column shows blank entries or no icons, see the [Troubleshooting](
 
 ## Duplicate Handling
 
-When a file being downloaded already exists in your download folder, Immich Desktop follows your chosen policy:
+When a file being downloaded already exists in your download folder, Summit follows your chosen policy:
 
 | Option | Behaviour |
 |---|---|
@@ -364,7 +364,7 @@ New files are also detected immediately via a file system watcher — when a new
 
 Go to **App Settings** in the sidebar:
 
-- **Launch at startup** — Immich Desktop starts automatically when you log in to Windows. Uses the Windows Task Scheduler (not a registry Run key), so it works reliably for standard and administrator accounts.
+- **Launch at startup** — Summit starts automatically when you log in to Windows. Uses the Windows Task Scheduler (not a registry Run key), so it works reliably for standard and administrator accounts.
 - **Show notifications** — desktop notifications for sync events (conflicts, errors, completions).
 
 ---
@@ -374,9 +374,9 @@ Go to **App Settings** in the sidebar:
 In **Accounts**, each account row has two action buttons:
 
 - **Pencil icon** — opens the Edit Account form to change the display name, remote URL, or local URL.
-- **Trash icon** — removes the account from Immich Desktop. Nothing is deleted from your Immich server or from your local files.
+- **Trash icon** — removes the account from Summit. Nothing is deleted from your Immich server or from your local files.
 
-> The API key created at login remains on your Immich server. To revoke it, go to Immich → Account Settings → API Keys and delete the key named **"Immich Desktop — *YourPCName*"**.
+> The API key created at login remains on your Immich server. To revoke it, go to Immich → Account Settings → API Keys and delete the key named **"Summit — *YourPCName*"**.
 
 ---
 
@@ -435,7 +435,7 @@ This happens when the Windows Cloud Files filter driver has the folder registere
 **To permanently stop this, the reparse point must be removed while the folder exists.**
 
 **Option 1 — change or remove the folder in Settings (recommended):**
-1. Make sure Immich Desktop is running.
+1. Make sure Summit is running.
 2. Go to Settings → Folders and either select a different sync root folder or change the sync mode to **Cloud Only** or **Cloud + Local**, then save.
 3. The app will unregister the old path on the next sync cycle (or immediately if you click Sync Now).
 4. Delete the old folder. It will not reappear.
@@ -444,21 +444,21 @@ This happens when the Windows Cloud Files filter driver has the folder registere
 
 If the app is already uninstalled or the above does not work, recreate the folder first (so the reparse point can be removed), then run from an elevated command prompt:
 ```
-"C:\Program Files\Immich Desktop\Immich Desktop.exe" --unregister-path "C:\Your\Sync\Folder"
+"C:\Program Files\Summit\Summit.exe" --unregister-path "C:\Your\Sync\Folder"
 ```
 After this completes, delete the folder normally.
 
 ### Explorer shows "Not Responding" when navigating to the sync folder
 - This can occur immediately after changing the sync root folder — restart Explorer (`Ctrl+Shift+Esc` → Details → right-click `explorer.exe` → End task, then File → Run new task → `explorer.exe`).
 - If it persists, check the Windows Application event log for CF API errors.
-- Ensure Immich Desktop is running — the app must be active to respond to Windows Cloud Files callbacks.
+- Ensure Summit is running — the app must be active to respond to Windows Cloud Files callbacks.
 
-### Ghost entries appear in Explorer's left-hand navigation pane (e.g. "Immich Desktop")
+### Ghost entries appear in Explorer's left-hand navigation pane (e.g. "Summit")
 - These are Desktop\NameSpace entries written when the sync root is registered.
-- They are removed automatically when you uninstall Immich Desktop or remove the account.
+- They are removed automatically when you uninstall Summit or remove the account.
 - To remove manually, run `regedit` and delete the key under:
   `HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace`
-  that corresponds to Immich Desktop, then restart Explorer.
+  that corresponds to Summit, then restart Explorer.
 
 ### Explorer Status column is blank or missing cloud icons
 
@@ -491,18 +491,18 @@ Both options only appear in the **classic context menu** ("Show more options") w
 5. Right-click the green-checkmark file → **Show more options** → **"Free up space"** and **"Always keep on this device"** should now appear.
 
 **If only "regular local files" are shown in Diagnostics:**
-These files existed in the folder before Files On-Demand was activated. Immich Desktop only creates placeholders for Immich photos that don't already exist locally with the same filename. Options:
+These files existed in the folder before Files On-Demand was activated. Summit only creates placeholders for Immich photos that don't already exist locally with the same filename. Options:
 - Use a **different (empty) folder** as your sync root, or
 - Delete the existing local copies to let the next sync cycle recreate them as proper cloud placeholders.
 
 ### The shell extension context menu DLL is not loading
 
 If the context menu items never appear even after hydrating files and checking via **Show more options**:
-1. Use the **Check shell registration** button on the Sync Status page — it will report whether `immich_shell_ext.dll` is correctly registered.
-2. If not registered, try reinstalling Immich Desktop.
+1. Use the **Check shell registration** button on the Sync Status page — it will report whether `summit_shell_ext.dll` is correctly registered.
+2. If not registered, try reinstalling Summit.
 3. If registered but still not appearing, open an elevated command prompt and run:
    ```
-   regsvr32 "C:\Program Files\Immich Desktop\immich_shell_ext.dll"
+   regsvr32 "C:\Program Files\Summit\summit_shell_ext.dll"
    ```
    Then restart Explorer.
 
@@ -522,19 +522,19 @@ If the context menu items never appear even after hydrating files and checking v
 
 ### Debug log location
 
-Immich Desktop writes a detailed debug log to:
+Summit writes a detailed debug log to:
 ```
-%LOCALAPPDATA%\Temp\immich_debug.log
+%LOCALAPPDATA%\Temp\summit_debug.log
 ```
-(Typically `C:\Users\YourName\AppData\Local\Temp\immich_debug.log`)
+(Typically `C:\Users\YourName\AppData\Local\Temp\summit_debug.log`)
 
 This log captures every key decision the app makes — sync cycles, folder checks, CF API calls, and registration steps. Include this file when reporting issues.
 
 A second log (Tauri plugin log) is written to:
 ```
-%APPDATA%\com.immich.desktop\logs\app.log
+%APPDATA%\com.summit.app\logs\app.log
 ```
 
 ---
 
-*Immich Desktop v1.0.0 — an unofficial companion for [Immich](https://immich.app).*
+*Summit v1.0.0 — an unofficial companion for [Immich](https://immich.app).*

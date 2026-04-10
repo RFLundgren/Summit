@@ -4,9 +4,9 @@ import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 import { isEnabled as autostartIsEnabled, enable as autostartEnable, disable as autostartDisable } from '@tauri-apps/plugin-autostart'
 import {
-  Cloud, FolderOpen, RefreshCw, Users, Clock, SlidersHorizontal,
+  Cloud, MountainSnow, FolderOpen, RefreshCw, Users, Clock, SlidersHorizontal,
   X, Minus, Wifi, Globe, HelpCircle, Loader, Play, Pause,
-  ArrowUp, ArrowDown, SkipForward, AlertCircle, Info, History,
+  ArrowUp, ArrowDown, SkipForward, AlertCircle, Info, History, Heart,
 } from 'lucide-react'
 import { useSettingsStore } from '../stores/settingsStore'
 import { ipc, ConnectionTestResult, AppConfig, SyncStatus, ActivityEntry, UpdaterStatus } from '../lib/ipc'
@@ -750,35 +750,124 @@ function AboutModal({ onClose, onCheckForUpdates }: { onClose: () => void; onChe
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-sm">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-          <span className="font-semibold text-gray-800">About</span>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            <X size={18} />
+          <div className="flex items-center gap-2">
+            <MountainSnow size={14} className="text-immich-primary" />
+            <span className="font-semibold text-gray-800">About Summit</span>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100 transition-colors">
+            <X size={15} />
           </button>
         </div>
-        <div className="px-5 py-6 flex flex-col items-center text-center gap-3">
-          <div className="w-14 h-14 rounded-2xl bg-immich-light flex items-center justify-center">
-            <Cloud size={28} className="text-immich-primary" />
+
+        <div className="px-5 py-5 flex flex-col gap-4 max-h-[80vh] overflow-y-auto">
+
+          {/* Identity */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-immich-light flex items-center justify-center shrink-0">
+                <MountainSnow size={18} className="text-immich-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">Summit</p>
+                <p className="text-xs text-gray-400">v{version} · by Richard Lundgren</p>
+              </div>
+            </div>
+            <button
+              onClick={onCheckForUpdates}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-immich-primary border border-immich-primary/30 hover:bg-immich-light rounded-md transition-colors shrink-0"
+            >
+              <RefreshCw size={11} />
+              Check for Updates
+            </button>
           </div>
-          <div>
-            <h2 className="text-base font-semibold text-gray-800">Summit</h2>
-            <p className="text-xs text-gray-400 mt-0.5">Version {version}</p>
+
+          {/* Story */}
+          <div className="text-xs text-gray-500 leading-relaxed flex flex-col gap-2">
+            <p>
+              Summit started as a companion to Pinnacle. I was already running a self-hosted Immich library and
+              had built Pinnacle to handle AI tagging — but I still needed a reliable way to keep my local folders
+              and my Immich library in sync automatically.
+            </p>
+            <p>
+              Nothing quite fit. Some tools required Docker. Others were too manual, or missing the Windows
+              Files On-Demand integration I wanted — the OneDrive experience, but for Immich.
+            </p>
+            <p>
+              So I built Summit. It runs quietly in the tray, syncs on a schedule, and uses the Windows Cloud
+              Files API to give you proper cloud placeholder files — open a photo and it downloads on demand,
+              just like OneDrive. Free up space or pin files from Explorer's right-click menu.
+            </p>
+            <p>
+              It's free, runs entirely on your local network, and your photos never leave it.
+            </p>
           </div>
-          <p className="text-sm text-gray-500 max-w-xs">
-            A Windows desktop sync client for self-hosted Immich. Keeps your local folders
-            and your Immich library in sync — automatically, in the background.
-          </p>
-          <button
-            onClick={onCheckForUpdates}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-immich-primary border border-immich-primary/30 hover:bg-immich-light rounded-md transition-colors"
-          >
-            <RefreshCw size={12} />
-            Check for Updates
-          </button>
-          <div className="text-xs text-gray-400 pt-2 border-t border-gray-100 w-full">
+
+          {/* What it does */}
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 flex flex-col gap-2">
+            <p className="text-xs font-semibold text-gray-700">What Summit does</p>
+            <div className="flex flex-col gap-1.5">
+              {[
+                ['Files On-Demand',        'OneDrive-style cloud placeholders via Windows CF API'],
+                ['Two-way sync',           'Upload local photos to Immich and download new ones'],
+                ['Multiple accounts',      'Sync multiple Immich servers simultaneously'],
+                ['Explorer integration',   '"Free up space" and "Pin" in the right-click context menu'],
+                ['Local/remote fallback',  'Switches automatically between local and internet URLs'],
+                ['Background operation',   'Runs silently in the system tray, syncs on a schedule'],
+              ].map(([feat, desc]) => (
+                <div key={feat} className="flex items-baseline gap-2">
+                  <span className="text-xs font-medium text-gray-600 w-36 shrink-0">{feat}</span>
+                  <span className="text-xs text-gray-400">{desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Contact */}
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 flex flex-col gap-1.5">
+            <p className="text-xs font-semibold text-gray-700">Get in touch</p>
+            <p className="text-xs text-gray-400 leading-relaxed">Bug reports, feature ideas, or just want to say hello — reach out any time.</p>
+            <a
+              href="mailto:rflundgren@gmail.com"
+              className="text-xs text-immich-primary hover:underline w-fit"
+            >
+              rflundgren@gmail.com
+            </a>
+          </div>
+
+          {/* Donate */}
+          <div className="rounded-lg border border-pink-200 bg-pink-50 p-3 flex flex-col gap-2.5">
+            <div className="flex items-center gap-2">
+              <Heart size={12} className="text-pink-400 shrink-0" />
+              <p className="text-xs font-semibold text-gray-700">Enjoying Summit?</p>
+            </div>
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Summit is free and built in my spare time. If it's saving you time and frustration,
+              I'd be most appreciative of your support.
+            </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              {[
+                { label: '☕  $5 — Buy me a coffee', url: 'https://paypal.me/RFLundgren/5' },
+                { label: '🥗  $10 — Buy me lunch',   url: 'https://paypal.me/RFLundgren/10' },
+                { label: '💛  You decide',            url: 'https://paypal.me/RFLundgren' },
+              ].map(({ label, url }) => (
+                <a
+                  key={url}
+                  href={url}
+                  className="px-3 py-1.5 rounded-md text-xs font-medium bg-white hover:bg-pink-100 border border-pink-200 hover:border-pink-300 text-gray-600 hover:text-gray-800 transition-colors no-underline"
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Built with */}
+          <div className="text-xs text-gray-300 text-center pt-1 border-t border-gray-100">
             Built with Tauri v2 · Rust · React · TypeScript
           </div>
+
         </div>
       </div>
     </div>

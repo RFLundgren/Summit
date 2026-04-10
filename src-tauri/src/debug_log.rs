@@ -1,16 +1,16 @@
-//! Direct file logging — writes to %TEMP%\immich_debug.log.
+//! Direct file logging — writes to %TEMP%\summit_debug.log.
 //!
 //! Use the `dlog!` macro instead of `log::debug!` for anything important.
 //! This bypasses tauri_plugin_log entirely, so it always works even if the
 //! plugin hasn't initialised or is buffering.
 //!
-//! Log location: %LOCALAPPDATA%\Temp\immich_debug.log
-//! (typically C:\Users\<name>\AppData\Local\Temp\immich_debug.log)
+//! Log location: %LOCALAPPDATA%\Temp\summit_debug.log
+//! (typically C:\Users\<name>\AppData\Local\Temp\summit_debug.log)
 
 use std::io::Write;
 
 pub fn write(msg: &str) {
-    let log_path = std::env::temp_dir().join("immich_debug.log");
+    let log_path = std::env::temp_dir().join("summit_debug.log");
     if let Ok(mut f) = std::fs::OpenOptions::new()
         .create(true)
         .append(true)

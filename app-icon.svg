@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <!-- Background gradient: deep blue-purple top to richer purple bottom -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#3344C8"/>
+      <stop offset="100%" stop-color="#4250AF"/>
+    </linearGradient>
+    <!-- Snow cap gradient: pure white to pale blue -->
+    <linearGradient id="snow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#DCE0FF"/>
+    </linearGradient>
+    <!-- Subtle glow behind the peak -->
+    <radialGradient id="glow" cx="0.5" cy="0.28" r="0.35">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Clip to rounded square -->
+    <clipPath id="rounded">
+      <rect width="1024" height="1024" rx="200" ry="200"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="200" ry="200" fill="url(#bg)"/>
+
+  <!-- Subtle radial glow at peak -->
+  <rect width="1024" height="1024" rx="200" ry="200" fill="url(#glow)"/>
+
+  <g clip-path="url(#rounded)">
+
+    <!-- Back-left mountain (receding, translucent) -->
+    <polygon
+      points="100,820 340,390 540,820"
+      fill="#FFFFFF"
+      opacity="0.12"
+    />
+
+    <!-- Back-right mountain (receding, translucent) -->
+    <polygon
+      points="510,820 720,420 910,820"
+      fill="#FFFFFF"
+      opacity="0.10"
+    />
+
+    <!-- Main mountain body -->
+    <polygon
+      points="512,172 164,820 860,820"
+      fill="#FFFFFF"
+    />
+
+    <!-- Snow cap — sits as an inverted triangle from the peak down -->
+    <!-- The "snow line" is roughly 30% down the mountain face -->
+    <polygon
+      points="512,172 400,430 624,430"
+      fill="url(#snow)"
+    />
+
+    <!-- Snow line detail — left face subtle ridge -->
+    <line x1="512" y1="172" x2="400" y2="430"
+          stroke="#DCE0FF" stroke-width="3" opacity="0.6"/>
+    <!-- Snow line detail — right face subtle ridge -->
+    <line x1="512" y1="172" x2="624" y2="430"
+          stroke="#DCE0FF" stroke-width="3" opacity="0.6"/>
+
+    <!-- Ground baseline — horizon stripe -->
+    <rect x="0" y="818" width="1024" height="14" rx="7"
+          fill="#FFFFFF" opacity="0.18"/>
+
+  </g>
+</svg>
