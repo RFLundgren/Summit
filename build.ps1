@@ -37,6 +37,32 @@ if (-not $MSVC -or -not (Test-Path $MSVC)) {
     $MSVC = "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717"
 }
 
+# Auto-detect VS Clang/LLVM and add to PATH so ring can find it.
+$llvmBin = $null
+if ($vsInstall) {
+    # VS ships clang in VC\Tools\Llvm\ARM64\bin (on ARM64 hosts) or Llvm\bin.
+    foreach ($candidate in @(
+        "$vsInstall\VC\Tools\Llvm\ARM64\bin",
+        "$vsInstall\VC\Tools\Llvm\bin",
+        "$vsInstall\VC\Auxiliary\Build\clang"
+    )) {
+        if (Test-Path "$candidate\clang.exe") { $llvmBin = $candidate; break }
+    }
+}
+if (-not $llvmBin) {
+    # Fallback: search VS install root for clang.exe
+    $found = Get-ChildItem "C:\Program Files\Microsoft Visual Studio" -Recurse -Filter "clang.exe" -ErrorAction SilentlyContinue |
+        Where-Object { $_.FullName -notlike "*Hostx64*" } |
+        Select-Object -First 1
+    if ($found) { $llvmBin = $found.DirectoryName }
+}
+if ($llvmBin) {
+    Write-Host "Clang: $llvmBin"
+    $env:PATH = "$llvmBin;$env:PATH"
+} else {
+    Write-Host "WARNING: clang not found - ring crate may fail to build"
+}
+
 # Auto-detect WDK
 $WDK     = $null
 $wdkBase = "${env:ProgramFiles(x86)}\Windows Kits\10\Lib"

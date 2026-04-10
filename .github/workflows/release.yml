@@ -80,6 +80,16 @@ jobs:
           "CI_LIB_X64=$libX64"                                         >> $env:GITHUB_ENV
           "CI_LIB_ARM64=$libArm64"                                     >> $env:GITHUB_ENV
 
+          # Add VS Clang to PATH so the ring crate can find it.
+          $llvmBin = @(
+            "$vsInstall\VC\Tools\Llvm\x64\bin",
+            "$vsInstall\VC\Tools\Llvm\bin"
+          ) | Where-Object { Test-Path "$_\clang.exe" } | Select-Object -First 1
+          if ($llvmBin) {
+            Write-Host "Clang: $llvmBin"
+            "PATH=$llvmBin;$env:PATH" >> $env:GITHUB_ENV
+          }
+
       # ── Build ───────────────────────────────────────────────────────────────
       - name: Build installers (ARM64 + x64)
         shell: pwsh
