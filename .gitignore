@@ -28,3 +28,6 @@ dist-ssr
 
 # Session / personal notes
 SESSION_NOTES.md
+
+# Signing keys — keep locally only, never commit
+SIGNING.md

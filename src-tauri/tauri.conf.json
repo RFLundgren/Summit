@@ -47,7 +47,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEMyNzY5NkM5MjI1RTQwQUEKUldTcVFGNGl5Wloyd3JBOHAzUnVOVFZlK2piQURlcXRkWCs0UncxaXNLT2F3Uzc3RVArZmxRSWMK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEY3NjE0NjBBQTUxRjM1MEMKUldRTU5SK2xDa1poOTBzb0U0WFI2VUltT0RmalNENVpiL1pFVHk4MnVPdmJrQnRlZ3VWeDI3K1AK",
       "endpoints": [
         "https://github.com/RFLundgren/Summit/releases/latest/download/latest.json"
       ]
