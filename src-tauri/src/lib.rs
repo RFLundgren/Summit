@@ -2,7 +2,7 @@ use std::sync::Arc;
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    Listener, Manager, WindowEvent,
+    Emitter, Listener, Manager, WindowEvent,
 };
 use tauri_plugin_updater::UpdaterExt;
 
