@@ -1,8 +1,13 @@
+use std::sync::Arc;
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     Listener, Manager, WindowEvent,
 };
+use tauri_plugin_updater::UpdaterExt;
+
+// Holds a pending update between check and download.
+pub struct PendingUpdate(pub tokio::sync::Mutex<Option<tauri_plugin_updater::Update>>);
 
 mod api;
 mod cloud_files;
@@ -19,6 +24,88 @@ fn show_window(app: tauri::AppHandle, label: String) {
         let _ = w.set_focus();
     }
 }
+
+// ── Updater helpers ───────────────────────────────────────────────────────────
+
+fn emit_updater_status(
+    app: &tauri::AppHandle,
+    state: &str,
+    version: Option<&str>,
+    percent: Option<u32>,
+    error: Option<&str>,
+) {
+    let mut payload = serde_json::json!({ "state": state });
+    if let Some(v) = version { payload["version"] = serde_json::json!(v); }
+    if let Some(p) = percent  { payload["percent"]  = serde_json::json!(p); }
+    if let Some(e) = error    { payload["error"]    = serde_json::json!(e); }
+    let _ = app.emit("updater:status", payload);
+}
+
+async fn perform_update_check(app: tauri::AppHandle) {
+    emit_updater_status(&app, "checking", None, None, None);
+    let updater = match app.updater() {
+        Ok(u) => u,
+        Err(e) => {
+            emit_updater_status(&app, "error", None, None, Some(&e.to_string()));
+            return;
+        }
+    };
+    match updater.check().await {
+        Err(e) => emit_updater_status(&app, "error", None, None, Some(&e.to_string())),
+        Ok(None) => emit_updater_status(&app, "not-available", None, None, None),
+        Ok(Some(update)) => {
+            let version = update.version.clone();
+            *app.state::<PendingUpdate>().0.lock().await = Some(update);
+            emit_updater_status(&app, "available", Some(&version), None, None);
+        }
+    }
+}
+
+#[tauri::command]
+async fn check_for_updates(app: tauri::AppHandle) -> Result<(), String> {
+    tauri::async_runtime::spawn(async move { perform_update_check(app).await });
+    Ok(())
+}
+
+#[tauri::command]
+async fn download_update(
+    app: tauri::AppHandle,
+    pending: tauri::State<'_, PendingUpdate>,
+) -> Result<(), String> {
+    let update = pending.0.lock().await.take().ok_or("No update pending")?;
+    let version = update.version.clone();
+    let app_c = app.clone();
+
+    tauri::async_runtime::spawn(async move {
+        let downloaded = Arc::new(std::sync::atomic::AtomicU64::new(0));
+        let dl = downloaded.clone();
+        let ver = version.clone();
+        let app_progress = app_c.clone();
+
+        let result = update
+            .download_and_install(
+                move |chunk, total| {
+                    let so_far = dl.fetch_add(chunk as u64, std::sync::atomic::Ordering::Relaxed)
+                        + chunk as u64;
+                    let percent = total
+                        .map(|t| ((so_far * 100) / t.max(1)) as u32)
+                        .unwrap_or(0);
+                    emit_updater_status(&app_progress, "downloading", Some(&ver), Some(percent), None);
+                },
+                || {},
+            )
+            .await;
+
+        if let Err(e) = result {
+            emit_updater_status(&app_c, "error", None, None, Some(&e.to_string()));
+        }
+        // On success the NSIS installer launches and the app exits automatically.
+    });
+
+    Ok(())
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -87,13 +174,22 @@ pub fn run() {
                 ))
                 .build(),
         )
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec![]),
         ))
+        .manage(PendingUpdate(tokio::sync::Mutex::new(None)))
         .setup(|app| {
+            // Spawn background update check 10 s after startup.
+            let app_for_update = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                tokio::time::sleep(std::time::Duration::from_secs(10)).await;
+                perform_update_check(app_for_update).await;
+            });
+
             // Build tray menu
             let open_item =
                 MenuItem::with_id(app, "open", "Open Dashboard", true, None::<&str>)?;
@@ -247,6 +343,8 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             show_window,
+            check_for_updates,
+            download_update,
             commands::connection_commands::test_connection,
             commands::auth_commands::login_account,
             commands::auth_commands::get_config,

@@ -9,9 +9,10 @@ import {
   ArrowUp, ArrowDown, SkipForward, AlertCircle, Info, History,
 } from 'lucide-react'
 import { useSettingsStore } from '../stores/settingsStore'
-import { ipc, ConnectionTestResult, AppConfig, SyncStatus, ActivityEntry } from '../lib/ipc'
+import { ipc, ConnectionTestResult, AppConfig, SyncStatus, ActivityEntry, UpdaterStatus } from '../lib/ipc'
 import AccountList from '../components/settings/AccountList'
 import FolderSettings from '../components/settings/FolderSettings'
+import { UpdateDialog } from '../components/UpdateDialog'
 
 type Page = 'status' | 'folders' | 'accounts' | 'activity' | 'sync' | 'app'
 
@@ -33,12 +34,18 @@ export default function Dashboard() {
   const [connStatus, setConnStatus] = useState<ConnectionTestResult | null>(null)
   const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null)
   const [showAbout, setShowAbout] = useState(false)
+  const [updaterStatus, setUpdaterStatus] = useState<UpdaterStatus>({ state: 'idle' })
+  const [showUpdateDialog, setShowUpdateDialog] = useState(false)
 
   useEffect(() => {
     load()
     const unlisteners: (() => void)[] = []
     listen('config://changed', () => load()).then((fn) => unlisteners.push(fn))
     listen<SyncStatus>('sync://status', (e) => setSyncStatus(e.payload)).then((fn) => unlisteners.push(fn))
+    ipc.onUpdaterStatus((status) => {
+      setUpdaterStatus(status)
+      if (status.state === 'available') setShowUpdateDialog(true)
+    }).then((fn) => unlisteners.push(fn))
     return () => unlisteners.forEach((fn) => fn())
   }, [])
 
@@ -160,7 +167,22 @@ export default function Dashboard() {
         </main>
       </div>
 
-      {showAbout && <AboutModal onClose={() => setShowAbout(false)} />}
+      {showAbout && (
+        <AboutModal
+          onClose={() => setShowAbout(false)}
+          onCheckForUpdates={() => {
+            setShowAbout(false)
+            ipc.checkForUpdates().catch(() => {})
+          }}
+        />
+      )}
+
+      {showUpdateDialog && (
+        <UpdateDialog
+          status={updaterStatus}
+          onDismiss={() => setShowUpdateDialog(false)}
+        />
+      )}
     </div>
   )
 }
@@ -717,7 +739,7 @@ function AppPage({ config }: { config: AppConfig }) {
 
 // ── About modal ───────────────────────────────────────────────────────────────
 
-function AboutModal({ onClose }: { onClose: () => void }) {
+function AboutModal({ onClose, onCheckForUpdates }: { onClose: () => void; onCheckForUpdates: () => void }) {
   const [version, setVersion] = useState('1.0.0')
 
   useEffect(() => {
@@ -747,6 +769,13 @@ function AboutModal({ onClose }: { onClose: () => void }) {
             A Windows desktop sync client for self-hosted Immich. Keeps your local folders
             and your Immich library in sync — automatically, in the background.
           </p>
+          <button
+            onClick={onCheckForUpdates}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-immich-primary border border-immich-primary/30 hover:bg-immich-light rounded-md transition-colors"
+          >
+            <RefreshCw size={12} />
+            Check for Updates
+          </button>
           <div className="text-xs text-gray-400 pt-2 border-t border-gray-100 w-full">
             Built with Tauri v2 · Rust · React · TypeScript
           </div>

@@ -1,4 +1,5 @@
 import { invoke } from '@tauri-apps/api/core'
+import { listen } from '@tauri-apps/api/event'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -46,6 +47,13 @@ export interface ActivityEntry {
   eventType: 'upload' | 'download' | 'skip' | 'error'
   fileName: string
   message: string
+}
+
+export interface UpdaterStatus {
+  state: 'idle' | 'checking' | 'available' | 'not-available' | 'downloading' | 'error'
+  version?: string
+  percent?: number
+  error?: string
 }
 
 // ── Commands ─────────────────────────────────────────────────────────────────
@@ -113,4 +121,11 @@ export const ipc = {
 
   checkWrtRegistration: (folder: string) =>
     invoke<string>('check_wrt_registration', { folder }),
+
+  // Updater
+  checkForUpdates: () => invoke<void>('check_for_updates'),
+  downloadUpdate: () => invoke<void>('download_update'),
+
+  onUpdaterStatus: (cb: (status: UpdaterStatus) => void) =>
+    listen<UpdaterStatus>('updater:status', (e) => cb(e.payload)),
 }
