@@ -1,0 +1,45 @@
+[package]
+name = "tauri-app"
+version = "0.1.0"
+description = "Immich Desktop Sync"
+authors = []
+edition = "2021"
+
+[lib]
+name = "tauri_app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-store = "2"
+tauri-plugin-autostart = "2"
+tauri-plugin-log = "2"
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+log = "0.4"
+tokio = { version = "1", features = ["rt", "rt-multi-thread", "sync", "time", "fs"] }
+rusqlite = { version = "0.31", features = ["bundled"] }
+anyhow = "1"
+windows = { version = "0.58", features = [
+  "Win32_Storage_CloudFilters",
+  "Win32_Foundation",
+  "Win32_Storage_FileSystem",
+  "Win32_System_Diagnostics_Debug",
+  "Win32_System_Com",
+  "Win32_System_Registry",
+  "Win32_UI_Shell",
+  "Storage_Provider",
+  "Storage",
+  "Foundation",
+] }
+uuid = { version = "1", features = ["v4"] }
+reqwest = { version = "0.12", features = ["json", "multipart", "stream"] }
+futures-util = "0.3"
+sha1 = "0.10"
+base64 = "0.22"
+chrono = { version = "0.4", features = ["serde"] }
+notify = "6"

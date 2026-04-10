@@ -1,0 +1,69 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Immich Desktop",
+  "version": "1.0.0",
+  "identifier": "com.immich.desktop",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "dashboard",
+        "title": "Immich Desktop",
+        "width": 820,
+        "height": 580,
+        "minWidth": 660,
+        "minHeight": 460,
+        "visible": false,
+        "decorations": true
+      },
+      {
+        "label": "settings",
+        "title": "Immich Desktop — Settings",
+        "width": 560,
+        "height": 560,
+        "resizable": false,
+        "visible": false,
+        "skipTaskbar": true
+      },
+      {
+        "label": "help",
+        "title": "Immich Desktop — Help",
+        "width": 700,
+        "height": 620,
+        "minWidth": 500,
+        "minHeight": 400,
+        "visible": false,
+        "skipTaskbar": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "resources": {
+      "shell-ext/target/current/immich_shell_ext.dll": "immich_shell_ext.dll",
+      "resources/sparse.msix": "sparse.msix",
+      "resources/ImmichDesktop.cer": "ImmichDesktop.cer"
+    },
+    "windows": {
+      "nsis": {
+        "installerHooks": "nsis/hooks.nsh"
+      }
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}
