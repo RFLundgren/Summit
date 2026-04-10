@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Immich Desktop",
+  "productName": "Summit",
   "version": "1.0.0",
-  "identifier": "com.immich.desktop",
+  "identifier": "com.summit.app",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "dashboard",
-        "title": "Immich Desktop",
+        "title": "Summit",
         "width": 820,
         "height": 580,
         "minWidth": 660,
@@ -23,7 +23,7 @@
       },
       {
         "label": "settings",
-        "title": "Immich Desktop — Settings",
+        "title": "Summit — Settings",
         "width": 560,
         "height": 560,
         "resizable": false,
@@ -32,7 +32,7 @@
       },
       {
         "label": "help",
-        "title": "Immich Desktop — Help",
+        "title": "Summit — Help",
         "width": 700,
         "height": 620,
         "minWidth": 500,
@@ -49,9 +49,9 @@
     "active": true,
     "targets": ["nsis"],
     "resources": {
-      "shell-ext/target/current/immich_shell_ext.dll": "immich_shell_ext.dll",
+      "shell-ext/target/current/summit_shell_ext.dll": "summit_shell_ext.dll",
       "resources/sparse.msix": "sparse.msix",
-      "resources/ImmichDesktop.cer": "ImmichDesktop.cer"
+      "resources/Summit.cer": "Summit.cer"
     },
     "windows": {
       "nsis": {

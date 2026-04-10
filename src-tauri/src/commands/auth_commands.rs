@@ -66,7 +66,7 @@ pub async fn login_account(
 
     // Create a named API key so the user can see/revoke it in Immich
     let machine = std::env::var("COMPUTERNAME").unwrap_or_else(|_| "Desktop".to_string());
-    let key_name = format!("Immich Desktop — {}", machine);
+    let key_name = format!("Summit — {}", machine);
     let api_key = auth::create_api_key(&login_url, &login_resp.access_token, &key_name)
         .await
         .map_err(|e| e.to_string())?;

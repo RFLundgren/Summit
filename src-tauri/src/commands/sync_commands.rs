@@ -149,7 +149,7 @@ pub fn check_wrt_registration(folder: String) -> String {
     "Only supported on Windows".to_string()
 }
 
-/// Diagnostic: dumps the SyncRootManager registry entries for Immich Desktop.
+/// Diagnostic: dumps the SyncRootManager registry entries for Summit.
 /// Returns a multi-line string describing what's registered (or any errors).
 #[tauri::command]
 pub fn check_shell_registration() -> String {
@@ -175,12 +175,12 @@ pub fn check_shell_registration() -> String {
             }
         };
 
-        // Use reg.exe to query all ImmichDesktop keys (covers any profile_id suffix
-        // and both unpackaged "ImmichDesktop!{SID}!..." and packaged
-        // "ImmichDesktop_{pfn}!{SID}!..." key name formats).
+        // Use reg.exe to query all Summit keys (covers any profile_id suffix
+        // and both unpackaged "Summit!{SID}!..." and packaged
+        // "Summit_{pfn}!{SID}!..." key name formats).
         let parent = r"HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager";
 
-        let mut lines = vec![format!("SID: {sid}"), format!("Looking for ImmichDesktop keys containing SID: {sid}")];
+        let mut lines = vec![format!("SID: {sid}"), format!("Looking for Summit keys containing SID: {sid}")];
 
         // List all keys under SyncRootManager then filter for ours
         let list = Command::new("reg")
@@ -192,14 +192,14 @@ pub fn check_shell_registration() -> String {
             Ok(o) => {
                 String::from_utf8_lossy(&o.stdout)
                     .lines()
-                    .filter(|l| l.contains(&sid) && l.contains("ImmichDesktop"))
+                    .filter(|l| l.contains(&sid) && l.contains("Summit"))
                     .map(|l| l.trim().to_string())
                     .collect()
             }
         };
 
         if found_keys.is_empty() {
-            lines.push("(no ImmichDesktop SyncRootManager keys found — registration not written yet, or sync profile not yet connected)".to_string());
+            lines.push("(no Summit SyncRootManager keys found — registration not written yet, or sync profile not yet connected)".to_string());
         } else {
             for key in &found_keys {
                 lines.push(format!("\nKey: {key}"));

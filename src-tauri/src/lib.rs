@@ -27,14 +27,14 @@ pub fn run() {
     // entries before deleting files.  We exit immediately after the operation
     // so no UI is shown.
     let args: Vec<String> = std::env::args().collect();
-    dlog!("=== Immich Desktop starting, args: {:?}", args);
+    dlog!("=== Summit starting, args: {:?}", args);
 
     // Log the raw contents of settings.json so we know exactly what's on disk.
     {
         let settings_path = {
             let appdata = std::env::var("APPDATA").unwrap_or_default();
             std::path::PathBuf::from(&appdata)
-                .join("com.immich.desktop")
+                .join("com.summit.app")
                 .join("settings.json")
         };
         dlog!("settings.json path: {:?}", settings_path);
@@ -101,7 +101,7 @@ pub fn run() {
                 MenuItem::with_id(app, "pause", "Pause Sync", true, None::<&str>)?;
             let sep = PredefinedMenuItem::separator(app)?;
             let quit_item =
-                MenuItem::with_id(app, "quit", "Quit Immich Desktop", true, None::<&str>)?;
+                MenuItem::with_id(app, "quit", "Quit Summit", true, None::<&str>)?;
 
             let menu = Menu::with_items(
                 app,
@@ -119,7 +119,7 @@ pub fn run() {
             let tray = TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())
                 .menu(&menu)
-                .tooltip("Immich Desktop")
+                .tooltip("Summit")
                 .show_menu_on_left_click(false)
                 .on_menu_event(move |app, event| match event.id.as_ref() {
                     "open" => {
@@ -173,11 +173,11 @@ pub fn run() {
                     serde_json::from_str::<crate::sync::SyncStatus>(event.payload())
                 {
                     let tip = match status.phase.as_str() {
-                        "uploading"   => "Immich Desktop - Uploading",
-                        "downloading" => "Immich Desktop - Downloading",
-                        "paused"      => "Immich Desktop - Paused",
-                        "error"       => "Immich Desktop - Error",
-                        _             => "Immich Desktop",
+                        "uploading"   => "Summit - Uploading",
+                        "downloading" => "Summit - Downloading",
+                        "paused"      => "Summit - Paused",
+                        "error"       => "Summit - Error",
+                        _             => "Summit",
                     };
                     let _ = tray_for_tooltip.set_tooltip(Some(tip));
                 }
@@ -189,7 +189,7 @@ pub fn run() {
                 let appdata = std::env::var("APPDATA").unwrap_or_default();
                 if let Ok(raw) = std::fs::read_to_string(
                     std::path::Path::new(&appdata)
-                        .join("com.immich.desktop")
+                        .join("com.summit.app")
                         .join("settings.json"),
                 ) {
                     if let Ok(root) = serde_json::from_str::<serde_json::Value>(&raw) {

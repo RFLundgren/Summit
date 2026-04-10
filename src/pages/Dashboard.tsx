@@ -63,7 +63,7 @@ export default function Dashboard() {
       >
         <div className="flex items-center gap-2 pointer-events-none">
           <Cloud size={18} className="text-white" />
-          <span className="text-white font-semibold text-sm">Immich Desktop</span>
+          <span className="text-white font-semibold text-sm">Summit</span>
           {activeProfile && (
             <span className="text-white/60 text-xs ml-1">{activeProfile.displayName}</span>
           )}
@@ -257,7 +257,7 @@ function StatusPage({
           <Cloud size={32} className="text-immich-primary" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-gray-800">Welcome to Immich Desktop</h2>
+          <h2 className="text-lg font-semibold text-gray-800">Welcome to Summit</h2>
           <p className="text-sm text-gray-500 mt-1 max-w-xs">
             Sign in to your Immich account to start syncing your photos.
           </p>
@@ -611,7 +611,7 @@ function SyncPage({ config }: { config: AppConfig }) {
 
   return (
     <div className="p-5">
-      <PageHeader title="Sync" description="Configure how often Immich Desktop checks for changes." />
+      <PageHeader title="Sync" description="Configure how often Summit checks for changes." />
 
       <div className="space-y-1">
         {options.map((o) => (
@@ -687,7 +687,7 @@ function AppPage({ config }: { config: AppConfig }) {
       <div className="space-y-5">
         <Toggle
           label="Launch at startup"
-          description="Start Immich Desktop automatically when you log in to Windows."
+          description="Start Summit automatically when you log in to Windows."
           checked={autostart}
           onToggle={() => setAutostart((v: boolean) => !v)}
         />
@@ -740,7 +740,7 @@ function AboutModal({ onClose }: { onClose: () => void }) {
             <Cloud size={28} className="text-immich-primary" />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-gray-800">Immich Desktop</h2>
+            <h2 className="text-base font-semibold text-gray-800">Summit</h2>
             <p className="text-xs text-gray-400 mt-0.5">Version {version}</p>
           </div>
           <p className="text-sm text-gray-500 max-w-xs">

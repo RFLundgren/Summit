@@ -147,7 +147,7 @@ impl ImmichClient {
         let form = reqwest::multipart::Form::new()
             .part("assetData", part)
             .text("deviceAssetId", device_asset_id.to_string())
-            .text("deviceId", "immich-desktop")
+            .text("deviceId", "summit")
             .text("fileCreatedAt", created)
             .text("fileModifiedAt", modified)
             .text("isFavorite", "false");

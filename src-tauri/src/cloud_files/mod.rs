@@ -133,7 +133,7 @@ extern "system" {
     ) -> HRESULT;
 }
 
-// ── Fixed provider GUID for Immich Desktop ───────────────────────────────────
+// ── Fixed provider GUID for Summit ───────────────────────────────────
 const PROVIDER_ID: GUID = GUID {
     data1: 0xB3C4_A1D2,
     data2: 0x5F6E,
@@ -288,7 +288,7 @@ impl CloudFilesProvider {
 
         // Step 2 — register with the CF filter driver.
         let identity_bytes = profile_id.as_bytes().to_vec();
-        let provider_name_h = HSTRING::from("Immich Desktop");
+        let provider_name_h = HSTRING::from("Summit");
         let provider_version_h = HSTRING::from("1.0");
         let registration = CF_SYNC_REGISTRATION {
             StructSize: std::mem::size_of::<CF_SYNC_REGISTRATION>() as u32,
@@ -411,17 +411,17 @@ impl CloudFilesProvider {
                             .map_err(|e| format!("await StorageFolder: {e}"))?;
                         let i_folder: IStorageFolder = Interface::cast(&folder)
                             .map_err(|e| format!("IStorageFolder cast: {e}"))?;
-                        // Static "ImmichDesktop" suffix — must match the Id declared in
+                        // Static "Summit" suffix — must match the Id declared in
                         // the MSIX manifest's windows.cloudFiles extension.  Windows uses
                         // that manifest entry to wire up automatic shell integration
                         // ("Free up space", overlay icons, etc.) for the sync root.
-                        let id = HSTRING::from(format!("{}!{}!ImmichDesktop", app_id_for_wrt, sid_for_wrt));
+                        let id = HSTRING::from(format!("{}!{}!Summit", app_id_for_wrt, sid_for_wrt));
 
                         let info = StorageProviderSyncRootInfo::new()
                             .map_err(|e| format!("new: {e}"))?;
                         info.SetId(&id).map_err(|e| format!("SetId: {e}"))?;
                         info.SetPath(&i_folder).map_err(|e| format!("SetPath: {e}"))?;
-                        info.SetDisplayNameResource(&HSTRING::from("Immich Desktop"))
+                        info.SetDisplayNameResource(&HSTRING::from("Summit"))
                             .map_err(|e| format!("SetDisplayNameResource: {e}"))?;
                         // IconResource must be set — Windows.FileExplorer.Common.dll crashes
                         // with an access violation if it is left null.
@@ -478,7 +478,7 @@ impl CloudFilesProvider {
                                     HKEY, HKEY_LOCAL_MACHINE, KEY_SET_VALUE, REG_SZ,
                                 };
                                 let hklm_path = format!(
-                                    r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager\{}!{}!ImmichDesktop",
+                                    r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager\{}!{}!Summit",
                                     app_id_for_wrt, sid_for_wrt
                                 );
                                 let path_w: Vec<u16> = hklm_path.encode_utf16().chain(std::iter::once(0)).collect();
@@ -512,7 +512,7 @@ impl CloudFilesProvider {
                             {
                                 use windows::Win32::System::Registry::{RegDeleteTreeW, HKEY_USERS};
                                 let hkcu_subkey = format!(
-                                    r"{}\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager\{}!{}!ImmichDesktop",
+                                    r"{}\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager\{}!{}!Summit",
                                     sid_for_wrt, app_id_for_wrt, sid_for_wrt
                                 );
                                 let subkey_w: Vec<u16> = hkcu_subkey.encode_utf16().chain(std::iter::once(0)).collect();
@@ -525,7 +525,7 @@ impl CloudFilesProvider {
                             }
                         }
                         Err(e) => {
-                            if app_id_for_wrt == "ImmichDesktop" {
+                            if app_id_for_wrt == "Summit" {
                                 log::warn!("cloud_files: Register failed (no package identity): {e}");
                             } else {
                                 log::error!("cloud_files: Register failed with PFN={app_id_for_wrt}: {e}");
@@ -964,7 +964,7 @@ unsafe extern "system" fn on_notify_dehydrate(
 /// "Free up space" for hydrated placeholder files.
 ///
 /// `app_id` is the Package Family Name when running inside a sparse/MSIX
-/// package, or "ImmichDesktop" when unpackaged.
+/// package, or "Summit" when unpackaged.
 fn register_shell_provider(
     app_id: &str,
     sid: &str,
@@ -977,9 +977,9 @@ fn register_shell_provider(
     };
     use windows::Win32::UI::Shell::{SHChangeNotify, SHCNE_ASSOCCHANGED, SHCNF_DWORD};
 
-    // Static "ImmichDesktop" suffix — must match the MSIX manifest's
+    // Static "Summit" suffix — must match the MSIX manifest's
     // windows.cloudFiles SyncRoot Id so Windows wires up shell integration.
-    let key_id = format!("{}!{}!ImmichDesktop", app_id, sid);
+    let key_id = format!("{}!{}!Summit", app_id, sid);
 
     // Clean up ALL stale SyncRootManager entries for this app — not just the
     // one matching the current profile GUID.  Each reinstall generates a new
@@ -1070,11 +1070,11 @@ fn register_shell_provider(
     let handler_clsid = "{AA7F4C3E-2B48-4C9A-9E2F-1D8B5C4A7E6F}";
 
     // --- Register the companion COM shell-extension DLL in HKCU\SOFTWARE\Classes ---
-    // The installer always drops immich_shell_ext.dll next to the exe.  We never
+    // The installer always drops summit_shell_ext.dll next to the exe.  We never
     // register that fixed name directly: Explorer locks the DLL it has loaded, so
     // the installer would be unable to overwrite it on update.
     //
-    // Instead we copy it to immich_shell_ext_{version}.dll once per version and
+    // Instead we copy it to summit_shell_ext_{version}.dll once per version and
     // register that versioned name.  The fixed-name file is never held open by
     // Explorer, so the installer can always replace it.  On startup after an update
     // the new versioned file is created and the registry is updated; Explorer picks
@@ -1087,8 +1087,8 @@ fn register_shell_provider(
         .ok()
         .and_then(|p| p.parent().map(|d| d.to_path_buf()))
     {
-        let base     = exe_dir.join("immich_shell_ext.dll");
-        let versioned = exe_dir.join(format!("immich_shell_ext_{}.dll", app_version));
+        let base     = exe_dir.join("summit_shell_ext.dll");
+        let versioned = exe_dir.join(format!("summit_shell_ext_{}.dll", app_version));
 
         // Copy base → versioned if the versioned file doesn't exist yet.
         if base.exists() && !versioned.exists() {
@@ -1103,9 +1103,9 @@ fn register_shell_provider(
             for entry in entries.flatten() {
                 let name = entry.file_name();
                 let name = name.to_string_lossy();
-                if name.starts_with("immich_shell_ext_")
+                if name.starts_with("summit_shell_ext_")
                     && name.ends_with(".dll")
-                    && name != format!("immich_shell_ext_{}.dll", app_version).as_str()
+                    && name != format!("summit_shell_ext_{}.dll", app_version).as_str()
                 {
                     let _ = std::fs::remove_file(entry.path()); // silent failure is fine if locked
                 }
@@ -1172,7 +1172,7 @@ fn register_shell_provider(
         // This is what actually causes Explorer to invoke our IContextMenu DLL.
         // Must be under SOFTWARE\Classes\*\shellex\ContextMenuHandlers\{name}.
         let cmh_key_path = format!(
-            r"{}\SOFTWARE\Classes\*\shellex\ContextMenuHandlers\ImmichDesktop",
+            r"{}\SOFTWARE\Classes\*\shellex\ContextMenuHandlers\Summit",
             sid
         );
         let mut hkey4 = HKEY::default();
@@ -1187,7 +1187,7 @@ fn register_shell_provider(
         if let Err(e) = r4 {
             log::warn!("cloud_files: ContextMenuHandlers registration failed: {e}");
         } else {
-            log::info!("cloud_files: registered ContextMenuHandlers\\ImmichDesktop");
+            log::info!("cloud_files: registered ContextMenuHandlers\\Summit");
         }
     }
 
@@ -1237,10 +1237,10 @@ pub fn unregister_shell_extension() {
     // before touching the registry so the driver stops managing those paths.
     {
         let settings_path = {
-            // %APPDATA%\com.immich.desktop\settings.json
+            // %APPDATA%\com.summit.app\settings.json
             let appdata = std::env::var("APPDATA").unwrap_or_default();
             std::path::PathBuf::from(appdata)
-                .join("com.immich.desktop")
+                .join("com.summit.app")
                 .join("settings.json")
         };
         if let Ok(raw) = std::fs::read_to_string(&settings_path) {
@@ -1358,9 +1358,9 @@ pub fn unregister_shell_extension() {
         unsafe { let _ = RegDeleteTreeW(HKEY_USERS, windows::core::PCWSTR(w.as_ptr())); }
     }
 
-    // Delete HKCU\SOFTWARE\Classes\*\shellex\ContextMenuHandlers\ImmichDesktop.
+    // Delete HKCU\SOFTWARE\Classes\*\shellex\ContextMenuHandlers\Summit.
     let cmh_key = format!(
-        r"{}\SOFTWARE\Classes\*\shellex\ContextMenuHandlers\ImmichDesktop",
+        r"{}\SOFTWARE\Classes\*\shellex\ContextMenuHandlers\Summit",
         sid
     );
     let w = to_wide(&cmh_key);
@@ -1471,13 +1471,13 @@ pub fn unregister_shell_extension() {
 /// the SyncRootManager registry key name.
 ///
 /// When the process has package identity (sparse or full MSIX package) this
-/// returns the Package Family Name, e.g. `"ImmichDesktop_8wekyb3d8bbwe"`.
+/// returns the Package Family Name, e.g. `"Summit_8wekyb3d8bbwe"`.
 /// Windows validates this against the installed-package list, which is what
 /// makes `StorageProviderSyncRootManager::Register` and
 /// `GetSyncRootInformationForFolder` work.
 ///
 /// When unpackaged (plain `tauri dev` without the sparse package) it returns
-/// `"ImmichDesktop"` — CF API operations still work but WinRT shell
+/// `"Summit"` — CF API operations still work but WinRT shell
 /// integration is unavailable.
 fn get_sync_provider_app_id() -> String {
     // GetCurrentPackageFamilyName lives in kernel32.dll (always linked).
@@ -1519,20 +1519,20 @@ fn get_sync_provider_app_id() -> String {
         if let Ok(output) = std::process::Command::new("powershell")
             .args([
                 "-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Command",
-                "(Get-AppxPackage -Name 'ImmichDesktop' -ErrorAction SilentlyContinue).PackageFamilyName",
+                "(Get-AppxPackage -Name 'Summit' -ErrorAction SilentlyContinue).PackageFamilyName",
             ])
             .output()
         {
             let pfn = String::from_utf8_lossy(&output.stdout).trim().to_string();
             if !pfn.is_empty() {
-                log::info!("cloud_files: ImmichDesktop package found via query, PFN = {pfn}");
+                log::info!("cloud_files: Summit package found via query, PFN = {pfn}");
                 return pfn;
             }
         }
 
         log::info!("cloud_files: no sparse package found — shell integration unavailable");
     }
-    "ImmichDesktop".to_string()
+    "Summit".to_string()
 }
 
 /// Return the current user's SID string (e.g. `S-1-5-21-...-1001`).

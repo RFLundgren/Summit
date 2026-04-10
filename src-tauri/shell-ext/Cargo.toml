@@ -1,10 +1,10 @@
 [package]
-name = "immich-shell-ext"
+name = "summit-shell-ext"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "immich_shell_ext"
+name = "summit_shell_ext"
 crate-type = ["cdylib"]
 
 [dependencies]

@@ -1,4 +1,4 @@
-; Tauri NSIS installer hooks for Immich Desktop.
+; Tauri NSIS installer hooks for Summit.
 ;
 ; NSIS_HOOK_PREINSTALL runs before files are copied.
 ; Removes any stale Start Menu shortcuts from previous installs so ghost
@@ -11,15 +11,15 @@
 
 !macro NSIS_HOOK_PREINSTALL
   ; Remove stale Start Menu shortcuts — covers both per-user and all-users locations.
-  Delete "$SMPROGRAMS\Immich Desktop.lnk"
-  Delete "$SMPROGRAMS\Immich Desktop\Immich Desktop.lnk"
-  RMDir  "$SMPROGRAMS\Immich Desktop"
-  Delete "$SMSTARTUP\Immich Desktop.lnk"
+  Delete "$SMPROGRAMS\Summit.lnk"
+  Delete "$SMPROGRAMS\Summit\Summit.lnk"
+  RMDir  "$SMPROGRAMS\Summit"
+  Delete "$SMSTARTUP\Summit.lnk"
 !macroend
 
 !macro NSIS_HOOK_POSTINSTALL
   ; Trust the self-signed cert so Windows accepts the sparse MSIX.
-  ExecWait 'certutil -addstore -f Root "$INSTDIR\ImmichDesktop.cer"'
+  ExecWait 'certutil -addstore -f Root "$INSTDIR\Summit.cer"'
   ; Register the sparse MSIX so WRT StorageProviderSyncRootManager::Register()
   ; gets a package identity and writes the correct SyncRootManager key name.
   ExecWait 'powershell.exe -WindowStyle Hidden -Command "Add-AppxPackage -Path \"$INSTDIR\sparse.msix\" -ExternalLocation \"$INSTDIR\" -ForceApplicationShutdown"'
@@ -27,5 +27,5 @@
 
 !macro NSIS_HOOK_PREUNINSTALL
   ExecWait '"$INSTDIR\tauri-app.exe" --unregister-shell'
-  ExecWait 'powershell.exe -WindowStyle Hidden -Command "Get-AppxPackage *ImmichDesktop* | Remove-AppxPackage"'
+  ExecWait 'powershell.exe -WindowStyle Hidden -Command "Get-AppxPackage *Summit* | Remove-AppxPackage"'
 !macroend

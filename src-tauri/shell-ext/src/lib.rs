@@ -1,8 +1,8 @@
-//! Immich Desktop cloud-file shell extension.
+//! Summit cloud-file shell extension.
 //!
 //! Implements IShellExtInit + IContextMenu (classic context menu) and
 //! IExplorerCommand (Windows 11 modern context menu) for files in an
-//! Immich Desktop sync root.
+//! Summit sync root.
 //!
 //! Also implements IStorageProviderStatusUISourceFactory so Explorer can show
 //! cloud/checkmark icons in the Status column for our sync root.

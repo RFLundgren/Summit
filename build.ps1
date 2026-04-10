@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Build Immich Desktop installers for ARM64 and/or x64.
+    Build Summit installers for ARM64 and/or x64.
 
 .PARAMETER Target
     Which architecture to build: arm64, x64, or both (default: both).
@@ -63,12 +63,12 @@ if (-not $MakeAppx -or -not $SignTool) {
     Die "MakeAppx.exe or SignTool.exe not found. Install the Windows SDK."
 }
 
-$MsixWork  = Join-Path $env:TEMP "ImmichDesktopMsix"
+$MsixWork  = Join-Path $env:TEMP "SummitMsix"
 $MsixOut   = "src-tauri\resources\sparse.msix"
-$CertOut   = "src-tauri\resources\ImmichDesktop.cer"
-$PfxPath   = Join-Path $MsixWork "ImmichDesktop.pfx"
-$PfxPass   = "ImmichBuild"
-$Publisher = "CN=ImmichDesktop"
+$CertOut   = "src-tauri\resources\Summit.cer"
+$PfxPath   = Join-Path $MsixWork "Summit.pfx"
+$PfxPass   = "SummitBuild"
+$Publisher = "CN=Summit"
 
 if (Test-Path $MsixWork) { Remove-Item $MsixWork -Recurse -Force }
 New-Item -ItemType Directory -Path $MsixWork | Out-Null
@@ -88,10 +88,10 @@ $manifest = @"
   xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   IgnorableNamespaces="uap uap10 rescap">
-  <Identity Name="ImmichDesktop" Publisher="$Publisher" Version="1.0.0.0" ProcessorArchitecture="neutral" />
+  <Identity Name="Summit" Publisher="$Publisher" Version="1.0.0.0" ProcessorArchitecture="neutral" />
   <Properties>
-    <DisplayName>Immich Desktop</DisplayName>
-    <PublisherDisplayName>Immich Desktop</PublisherDisplayName>
+    <DisplayName>Summit</DisplayName>
+    <PublisherDisplayName>Summit</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
@@ -100,7 +100,7 @@ $manifest = @"
   <Resources><Resource Language="en-us" /></Resources>
   <Applications>
     <Application Id="App" Executable="tauri-app.exe" EntryPoint="Windows.FullTrustApplication">
-      <uap:VisualElements DisplayName="Immich Desktop" Description="Immich Desktop Sync"
+      <uap:VisualElements DisplayName="Summit" Description="Summit"
         BackgroundColor="transparent" Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png" />
     </Application>
@@ -149,8 +149,8 @@ function Build-Arch([string]$RustTarget, [string]$LibPath) {
     # Stage the DLL to a neutral location so tauri.conf.json can reference it
     # regardless of which architecture is being built.
     New-Item -ItemType Directory -Force -Path $STAGING | Out-Null
-    $src = "src-tauri\shell-ext\target\$RustTarget\release\immich_shell_ext.dll"
-    $dst = "$STAGING\immich_shell_ext.dll"
+    $src = "src-tauri\shell-ext\target\$RustTarget\release\summit_shell_ext.dll"
+    $dst = "$STAGING\summit_shell_ext.dll"
     Copy-Item $src $dst -Force
     Step "Staged DLL: $src → $dst"
 

@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Installs a sparse MSIX package that gives Immich Desktop package identity,
+    Installs a sparse MSIX package that gives Summit package identity,
     enabling StorageProviderSyncRootManager::Register and the "Free up space"
     context menu item for cloud placeholder files.
 
@@ -29,13 +29,13 @@ $ErrorActionPreference = "Stop"
 # For "tauri dev" this is the Tauri debug output; adjust if needed.
 $AppDir = Join-Path $PSScriptRoot "src-tauri\target\release"
 
-$PackageName    = "ImmichDesktop"
+$PackageName    = "Summit"
 $PackageVersion = "1.0.0.0"
-$Publisher      = "CN=ImmichDesktop"
-$DisplayName    = "Immich Desktop"
-$WorkDir        = Join-Path $env:TEMP "ImmichDesktopSparse"
+$Publisher      = "CN=Summit"
+$DisplayName    = "Summit"
+$WorkDir        = Join-Path $env:TEMP "SummitSparse"
 $MsixPath       = Join-Path $WorkDir "sparse.msix"
-$CertPath       = Join-Path $WorkDir "ImmichDesktop.pfx"
+$CertPath       = Join-Path $WorkDir "Summit.pfx"
 $CertPassword   = "ImmichDev"
 
 # --- Find SDK tools ----------------------------------------------------------
@@ -127,15 +127,15 @@ $Manifest = @"
                  EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
         DisplayName="$DisplayName"
-        Description="Immich Desktop Sync"
+        Description="Summit Sync"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png" />
       <Extensions>
         <uap:Extension Category="windows.cloudFiles">
           <uap:CloudFiles>
-            <uap:SyncRoot Id="ImmichDesktop">
-              <uap:DisplayNameResource>Immich Desktop</uap:DisplayNameResource>
+            <uap:SyncRoot Id="Summit">
+              <uap:DisplayNameResource>Summit</uap:DisplayNameResource>
               <uap:IconResource>Assets\StoreLogo.png</uap:IconResource>
               <uap:HydrationPolicy Primary="Full" Modifier="AutoDehydrationAllowed" />
               <uap:PopulationPolicy Primary="Full" />
@@ -229,7 +229,7 @@ if ($pkg) {
     Write-Host "SUCCESS" -ForegroundColor Green
     Write-Host "  Package Family Name : $pfn"
     Write-Host ""
-    Write-Host "The next time you launch Immich Desktop (tauri dev or the built binary)"
+    Write-Host "The next time you launch Summit (tauri dev or the built binary)"
     Write-Host "it will have package identity and 'Free up space' will appear on hydrated"
     Write-Host "placeholder files after the first sync."
     Write-Host ""

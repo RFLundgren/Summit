@@ -48,7 +48,7 @@ export default function AppSettingsTab({ settings, onChange }: Props) {
     <div className="space-y-5">
       <Toggle
         label="Launch at startup"
-        description="Start Immich Desktop automatically when you log in to Windows."
+        description="Start Summit automatically when you log in to Windows."
         checked={settings.autostart}
         onToggle={() => onChange({ ...settings, autostart: !settings.autostart })}
       />

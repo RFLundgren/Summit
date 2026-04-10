@@ -1,7 +1,7 @@
 [package]
 name = "tauri-app"
 version = "0.1.0"
-description = "Immich Desktop Sync"
+description = "Summit"
 authors = []
 edition = "2021"
 
